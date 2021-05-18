@@ -11,7 +11,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void onTap(Boat boat) {
     Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 900),
+        transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, _) {
           return FadeTransition(
             opacity: animation,
