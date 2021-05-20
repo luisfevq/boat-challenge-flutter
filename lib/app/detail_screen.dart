@@ -14,18 +14,31 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
+  Animation animation;
 
   @override
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
     );
     _animationController.forward(from: 0.0);
     _animationController.drive(
       CurveTween(curve: Curves.easeInOutBack),
     );
+    animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        curve: Curves.easeInOutBack,
+        parent: _animationController,
+        reverseCurve: Curves.easeInOutBack,
+      ),
+    );
     super.initState();
+  }
+
+  void onTapClose() {
+    _animationController.reverse();
+    Navigator.pop(context);
   }
 
   @override
@@ -57,7 +70,7 @@ class _DetailScreenState extends State<DetailScreen>
                     left: value == 0 ? initialPosition : 120,
                     child: Container(
                       child: Transform.scale(
-                        scale: 1.8,
+                        scale: 1.8 * animation.value,
                         child: Transform.rotate(
                           angle: Math.pi / 180 * (-90 * value),
                           child: Image.asset(
@@ -72,10 +85,24 @@ class _DetailScreenState extends State<DetailScreen>
                     ),
                   ),
                   Positioned(
+                    top: size.height * .4,
+                    child: Container(
+                      width: size.width,
+                      height: size.height * .4,
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        widget.boat.title,
+                        style: TextStyle(
+                          fontSize: 28,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
                     top: 80,
                     left: 20,
                     child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => onTapClose(),
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(

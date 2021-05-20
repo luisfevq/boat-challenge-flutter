@@ -1,15 +1,48 @@
 import 'package:boat_app/app/boats.dart';
 import 'package:boat_app/app/detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  void onTap(Boat boat) {
-    Navigator.of(context).push(
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  final _pageController = PageController();
+  AnimationController _animationController;
+  double page = 0.0;
+
+  @override
+  void initState() {
+    _pageController.addListener(_listenScroll);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+      reverseDuration: const Duration(milliseconds: 1200),
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _pageController.removeListener(_listenScroll);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _listenScroll() {
+    setState(() {
+      page = _pageController.page;
+      print(page);
+    });
+  }
+
+  Future<void> onTap(Boat boat) async {
+    _animationController.forward();
+    await Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, _) {
@@ -22,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+    _animationController.reverse();
   }
 
   @override
@@ -53,13 +87,22 @@ class _HomeScreenState extends State<HomeScreen> {
               width: size.width,
               height: size.height - 110,
               child: PageView.builder(
+                controller: _pageController,
                 itemCount: boatsData.length,
                 itemBuilder: (BuildContext context, int index) {
+                  final percent = (page - index).abs().clamp(0.0, 1.0);
+
+                  final opacity = percent.clamp(0.0, 0.6);
+
                   final boat = boatsData[index];
-                  return boatWidget(
-                    boat: boat,
-                    size: size,
-                    onTap: () => onTap(boat),
+
+                  return Opacity(
+                    opacity: (1 - opacity),
+                    child: boatWidget(
+                      boat: boat,
+                      size: size,
+                      onTap: () => onTap(boat),
+                    ),
                   );
                 },
               ),
