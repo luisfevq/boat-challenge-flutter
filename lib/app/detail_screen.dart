@@ -20,7 +20,7 @@ class _DetailScreenState extends State<DetailScreen>
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
     );
     _animationController.forward(from: 0.0);
     _animationController.drive(
@@ -86,14 +86,194 @@ class _DetailScreenState extends State<DetailScreen>
                   ),
                   Positioned(
                     top: size.height * .4,
-                    child: Container(
-                      width: size.width,
-                      height: size.height * .4,
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        widget.boat.title,
-                        style: TextStyle(
-                          fontSize: 28,
+                    child: Opacity(
+                      opacity: value,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          width: size.width,
+                          height: size.height * .6 - 10,
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                top: 0,
+                                child: Text(
+                                  widget.boat.title,
+                                  style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: size.height * .05,
+                                child: Text(
+                                  "By ${widget.boat.by}",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .1 * value,
+                                child: Container(
+                                  width: size.width,
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Text(
+                                    widget.boat.description,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .16 * value,
+                                child: Text(
+                                  "SPEC",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .21 * value,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: size.width * .4,
+                                      child: Text(
+                                        "Boat Length",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.boat.boatLength,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .25 * value,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: size.width * .4,
+                                      child: Text(
+                                        "Beam",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.boat.beam,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .29 * value,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: size.width * .4,
+                                      child: Text(
+                                        "Weight",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.boat.weight,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .33 * value,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: size.width * .4,
+                                      child: Text(
+                                        "Fuel capacity",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.boat.fuelCapacity,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 0),
+                                top: size.height * .38 * value,
+                                child: Text(
+                                  "GALLERY",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 10),
+                                bottom: value,
+                                child: Container(
+                                  width: size.width,
+                                  height: 150,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      CardItemGallery(),
+                                      CardItemGallery(),
+                                      CardItemGallery(),
+                                      CardItemGallery(),
+                                      CardItemGallery(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -121,6 +301,23 @@ class _DetailScreenState extends State<DetailScreen>
               ),
             );
           }),
+    );
+  }
+}
+
+class CardItemGallery extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 160,
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: const EdgeInsets.only(
+        right: 10,
+      ),
     );
   }
 }

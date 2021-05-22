@@ -14,13 +14,15 @@ class _HomeScreenState extends State<HomeScreen>
   AnimationController _animationController;
   double page = 0.0;
 
+  double currentAppBarPosition = 0.0;
+
   @override
   void initState() {
     _pageController.addListener(_listenScroll);
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
-      reverseDuration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 400),
+      reverseDuration: const Duration(milliseconds: 1000),
     );
     super.initState();
   }
@@ -36,15 +38,17 @@ class _HomeScreenState extends State<HomeScreen>
   void _listenScroll() {
     setState(() {
       page = _pageController.page;
-      print(page);
     });
   }
 
   Future<void> onTap(Boat boat) async {
     _animationController.forward();
+    setState(() {
+      currentAppBarPosition = -20;
+    });
     await Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 200),
         pageBuilder: (context, animation, _) {
           return FadeTransition(
             opacity: animation,
@@ -55,6 +59,9 @@ class _HomeScreenState extends State<HomeScreen>
         },
       ),
     );
+    setState(() {
+      currentAppBarPosition = 0;
+    });
     _animationController.reverse();
   }
 
@@ -68,18 +75,20 @@ class _HomeScreenState extends State<HomeScreen>
           left: 20,
           right: 20,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
           children: [
-            Container(
-              width: size.width,
-              child: Text(
-                "Boats",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              top: currentAppBarPosition,
+              child: Container(
+                width: size.width,
+                child: Text(
+                  "Boats",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -91,17 +100,21 @@ class _HomeScreenState extends State<HomeScreen>
                 itemCount: boatsData.length,
                 itemBuilder: (BuildContext context, int index) {
                   final percent = (page - index).abs().clamp(0.0, 1.0);
+                  final scale = (page - index).abs().clamp(0.0, 0.3);
 
                   final opacity = percent.clamp(0.0, 0.6);
 
                   final boat = boatsData[index];
 
-                  return Opacity(
-                    opacity: (1 - opacity),
-                    child: boatWidget(
-                      boat: boat,
-                      size: size,
-                      onTap: () => onTap(boat),
+                  return Transform.scale(
+                    scale: 1 - scale,
+                    child: Opacity(
+                      opacity: (1 - opacity),
+                      child: boatWidget(
+                        boat: boat,
+                        size: size,
+                        onTap: () => onTap(boat),
+                      ),
                     ),
                   );
                 },
